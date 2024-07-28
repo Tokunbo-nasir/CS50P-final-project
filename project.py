@@ -3,7 +3,6 @@ from selenium import webdriver
 
 DRIVER_PATH = 'C:/Users/tokun/Downloads/Compressed/chromedriver-win64/chromedriver-win64'
 
-
 def input_check(m,mp,mi,y):
     make_list =['abarth' ,'ac' ,'aixam' , 'ak', 'alfa romeo', 'alpine', 'alvis', 
                 'ariel', 'aston martin','auburn', 'audi', 'austin', 'bac', 'beauford',
@@ -40,7 +39,7 @@ def userinput():
     while True: 
         ans1 = input("Do you want to search all cars with no specifications? (Yes or No)").lower()
         if ans1 == 'yes':
-            URL1 = 'https://www.autotrader.co.uk/search-form?postcode=SW1A%201AA&sort=year-dsc'
+            URL1 = 'https://www.autotrader.co.uk/car-search?postcode=SW1A%201AA&sort=year-dsc'
             return URL1
         elif ans1 == 'no':
                 try:
@@ -49,14 +48,16 @@ def userinput():
                     milage = input("What is the maximum milage ? e.g (100000): ")
                     year = input("What is the minimum year? e.g (2023): ")
                     input_check(make, maxprice, milage, year)
-                    URL2 = f'https://www.autotrader.co.uk/search-form?make={make}&maximum-mileage={milage}&postcode=SW1A%201AA&price-to={maxprice}&sort=year-dsc&year-from={year}'
+                    URL2 = f"https://www.autotrader.co.uk/car-search?make={make}&maximum-mileage={milage}&postcode=SW1A%201AA&price-to={maxprice}&sort=year-dsc&year-from={year}"
                     return URL2
                 except ValueError:
                     print(f"Incorrect entry, please try again")
                     userinput()
-           
+                    
 def main():
-    driver = webdriver.Chrome()
-    URL = 'https://www.autotrader.co.uk/car-search?advertising-location=at_cars&body-type=Coupe&fuel-consumption=OVER_30&fuel-type=Petrol&make=BMW&max-engine-power=600&maximum-badge-engine-size=4.5&maximum-mileage=45000&min-engine-power=100&minimum-badge-engine-size=1.4&minimum-mileage=10000&moreOptions=visible&postcode=SW1A%201AA&price-from=2500&price-to=40000&radius=20&sort=relevance&transmission=Automatic&year-from=2010&year-to=2019&zero-to-60=4_TO_6&zero-to-60=TO_4'
+    URL = userinput()
+    options = webdriver.ChromeOptions()
+    options.add_experimental_option("detach", True)
+    driver = webdriver.Chrome(options=options)
     response = driver.get(URL)
 main()
