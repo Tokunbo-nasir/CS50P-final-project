@@ -69,17 +69,6 @@ def scraper(url):
     source = driver.page_source
     soup = BeautifulSoup(source, "html.parser")
     print(soup)
-    #TODO scrape data from page 1 then click page 2 scrape data from page 2
-    # x = 1
-    # m_list = []
-    # for i in range(16):
-    #     try:
-    #         path = f'/html/body/div[3]/div[1]/main/article/div[2]/ul/li[{x}]/section/div[1]/div/div/section/section/a/h3'
-    #         m_list.append(driver.find_element(By.XPATH, path))
-    #         x += 1
-    #     except NoSuchElementException:
-    #         pass
-    # print(f"{m_list}")
  
    
 
