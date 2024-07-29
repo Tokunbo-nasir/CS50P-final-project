@@ -1,7 +1,7 @@
 from selenium import webdriver
-
-
-DRIVER_PATH = 'C:/Users/tokun/Downloads/Compressed/chromedriver-win64/chromedriver-win64'
+from selenium.webdriver.common.by import By
+from bs4 import BeautifulSoup
+import time
 
 def input_check(m,mp,mi,y):
     make_list =['abarth' ,'ac' ,'aixam' , 'ak', 'alfa romeo', 'alpine', 'alvis', 
@@ -34,12 +34,11 @@ def input_check(m,mp,mi,y):
     else:
         return True
     
-    
 def userinput():
     while True: 
         ans1 = input("Do you want to search all cars with no specifications? (Yes or No)").lower()
         if ans1 == 'yes':
-            URL1 = 'https://www.autotrader.co.uk/car-search?postcode=SW1A%201AA&sort=year-dsc'
+            URL1 = "https://www.autotrader.co.uk/car-search?postcode=SW1A%201AA&sort=year-dsc"
             return URL1
         elif ans1 == 'no':
                 try:
@@ -53,11 +52,38 @@ def userinput():
                 except ValueError:
                     print(f"Incorrect entry, please try again")
                     userinput()
-                    
-def main():
-    URL = userinput()
+
+def scraper(url):
+    '''Use selenium to open a broswer page and click the accept cookies button'''
     options = webdriver.ChromeOptions()
     options.add_experimental_option("detach", True)
+    options.add_argument("--disable-webusb")
+    options.add_experimental_option('excludeSwitches', ['enable-logging'])
     driver = webdriver.Chrome(options=options)
-    response = driver.get(URL)
+    driver.get(url)
+    driver.switch_to.frame("sp_message_iframe_1086457")
+    driver.find_element(By.XPATH,"//button[text()='Accept All']").click()
+    print(f"hello")
+    
+    '''Obtain the page source and use as an input for Beautiful soup'''
+    source = driver.page_source
+    soup = BeautifulSoup(source, "html.parser")
+    print(soup)
+    #TODO scrape data from page 1 then click page 2 scrape data from page 2
+    # x = 1
+    # m_list = []
+    # for i in range(16):
+    #     try:
+    #         path = f'/html/body/div[3]/div[1]/main/article/div[2]/ul/li[{x}]/section/div[1]/div/div/section/section/a/h3'
+    #         m_list.append(driver.find_element(By.XPATH, path))
+    #         x += 1
+    #     except NoSuchElementException:
+    #         pass
+    # print(f"{m_list}")
+ 
+   
+
+def main():
+    URL = userinput()
+    scraper(URL)
 main()
