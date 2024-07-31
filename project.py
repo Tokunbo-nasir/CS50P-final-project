@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 import time
+import re
 
 def input_check(m,mp,mi,y):
     make_list =['abarth' ,'ac' ,'aixam' , 'ak', 'alfa romeo', 'alpine', 'alvis', 
@@ -53,6 +54,22 @@ def userinput():
                     print(f"Incorrect entry, please try again")
                     userinput()
 
+class cars:
+    def __init__(self, make='', reg = '', year = '', price = '', owners ='', enginesize= '', fueltype ='', gearbox ='', 
+                 milage ='', hp ='', btype='', doors=''):
+        self.make = make
+        self.reg = reg
+        self.year = year
+        self.price = price 
+        self.owners = owners
+        self.enginesize = enginesize
+        self.fueltype = fueltype
+        self.gearbox = gearbox
+        self.milage = milage 
+        self.hp = hp
+        self.btype = btype
+        self.doors = doors
+        
 def scraper(url):
     '''Use selenium to open a broswer page and click the accept cookies button'''
     options = webdriver.ChromeOptions()
@@ -65,12 +82,34 @@ def scraper(url):
     driver.find_element(By.XPATH,"//button[text()='Accept All']").click()
     print(f"hello")
     
+    
+    #TODO USE LIST TRAVERSAL VIDEO TO ITERATE THROUGH EACH ELEMENT AND CHECK THE NUMBER OF INNER ELEMENTS IF YES ADD TO DICTIONARY 
     '''Obtain the page source and use as an input for Beautiful soup'''
     source = driver.page_source
     soup = BeautifulSoup(source, "html.parser")
-    print(soup)
- 
-   
+    test = soup.find("ul", {"class" : "at__sc-1iwoe3s-1 dzbHte"}).findAll("li", recursive=False)
+    for i in test:
+        print(i)
+    
+    #TODO get all attributes of the cars from the classes
+    #TODO if attribute is missing , set it to null 
+     
+class cars:
+    def __init__(self, make='',price = '',year = '',reg = '',btype='',
+                 milage ='',enginesize= '',hp ='',gearbox ='',
+                 fueltype ='',owners='', doors=''):
+        self.make = make
+        self.price = price 
+        self.year = year
+        self.reg = reg
+        self.btype = btype
+        self.milage = milage
+        self.enginesize = enginesize
+        self.hp = hp
+        self.gearbox = gearbox
+        self.fueltype = fueltype
+        self.owners = owners
+        self.doors = doors     
 
 def main():
     URL = userinput()
