@@ -82,34 +82,46 @@ def scraper(url):
     driver.find_element(By.XPATH,"//button[text()='Accept All']").click()
     print(f"hello")
     
+    time.sleep(5)
     
     #TODO USE LIST TRAVERSAL VIDEO TO ITERATE THROUGH EACH ELEMENT AND CHECK THE NUMBER OF INNER ELEMENTS IF YES ADD TO DICTIONARY 
     '''Obtain the page source and use as an input for Beautiful soup'''
     source = driver.page_source
     soup = BeautifulSoup(source, "html.parser")
-    test = soup.find("ul", {"class" : "at__sc-1iwoe3s-1 dzbHte"}).findAll("li", recursive=False)
+    test = soup.find("ul", {"class" : "at__sc-1iwoe3s-1 dzbHte"}).findAll("li", {"class" :"at__sc-1iwoe3s-2 hGhRgM"}, recursive=False)
+    time.sleep(5)
+    
+    carz =[]
     for i in test:
-        print(i)
+        empty_dict = dict.fromkeys(['make', 'price', 'year', 'reg', 'btpye', 'milage', 'enginesize', 'hp', 'gearbox', 'fueltype', 'owners', 'doors'])
+        make_class = i.find("h3", {"class" : "at__sc-1n64n0d-7 fcDnGr"})
+        print(make_class)
+        #make_class = str(make_class)
+        #make_class1 = re.search(">.+<")
+        empty_dict['make'] = make_class #add make of each car to dictionary 
+        carz.append(empty_dict) # append dictionary of each car to carz list 
+    
+    print(carz)
     
     #TODO get all attributes of the cars from the classes
     #TODO if attribute is missing , set it to null 
      
-class cars:
-    def __init__(self, make='',price = '',year = '',reg = '',btype='',
-                 milage ='',enginesize= '',hp ='',gearbox ='',
-                 fueltype ='',owners='', doors=''):
-        self.make = make
-        self.price = price 
-        self.year = year
-        self.reg = reg
-        self.btype = btype
-        self.milage = milage
-        self.enginesize = enginesize
-        self.hp = hp
-        self.gearbox = gearbox
-        self.fueltype = fueltype
-        self.owners = owners
-        self.doors = doors     
+# class cars:
+#     def __init__(self, make='',price = '',year = '',reg = '',btpye='',
+#                  milage ='',enginesize= '',hp ='',gearbox ='',
+#                  fueltype ='',owners='', doors=''):
+#         self.make = make
+#         self.price = price 
+#         self.year = year
+#         self.reg = reg
+#         self.btype = btype
+#         self.milage = milage
+#         self.enginesize = enginesize
+#         self.hp = hp
+#         self.gearbox = gearbox
+#         self.fueltype = fueltype
+#         self.owners = owners
+#         self.doors = doors     
 
 def main():
     URL = userinput()
