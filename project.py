@@ -50,29 +50,14 @@ def userinput():
                     in_enginesize = input("What is the maximum engine size? e.g(3.4): ")
                     in_hp = input("Maximum engine power? e.g(500)")
                     input_check(in_make,in_maxprice,in_milage,in_year,)
-                    
-                    URL2 = f"https://www.autotrader.co.uk/car-search?advertising-location=at_cars&fuel-type=Petrol&fuel-type=Diesel&fuel-type=Petrol%20Plug-in%20Hybrid&fuel-type=Diesel%20Plug-in%20Hybrid&fuel-type=Petrol%20Hybrid&fuel-type=Diesel%20Hybrid&max-engine-power={in_hp}&maximum-badge-engine-size={in_enginesize}&maximum-mileage={in_milage}&moreOptions=visible&postcode=SW1A%201AA&price-to={in_maxprice}&sort=relevance&year-from={in_year}"
+
+                    URL2 = f"https://www.autotrader.co.uk/car-search?advertising-location=at_cars&fuel-type=Petrol&fuel-type=Diesel&fuel-type=Petrol%20Plug-in%20Hybrid&fuel-type=Diesel%20Plug-in%20Hybrid&fuel-type=Petrol%20Hybrid&fuel-type=Diesel%20Hybrid&max-engine-power={in_hp}&maximum-badge-engine-size={in_enginesize}&maximum-mileage={in_milage}&moreOptions=visible&postcode=SW1A%201AA&price-to={in_maxprice}&sort=most-recent&year-from={in_year}"
                     
                     return URL2
                 except ValueError:
                     print(f"Incorrect entry, please try again")
                     userinput()
 
-class cars:
-    def __init__(self, make='', reg = '', year = '', price = '', enginesize= '', fueltype ='', gearbox ='', 
-                 milage ='', hp ='', btype='', doors=''):
-        self.make = make
-        self.reg = reg
-        self.year = year
-        self.price = price 
-        self.enginesize = enginesize
-        self.fueltype = fueltype
-        self.gearbox = gearbox
-        self.milage = milage 
-        self.hp = hp
-        self.btype = btype
-        self.doors = doors
-        
 def scraper(url):
     '''Use selenium to open a broswer page and click the accept cookies button'''
     options = webdriver.ChromeOptions()
@@ -92,49 +77,79 @@ def scraper(url):
     test = soup.find("ul", {"class" : "at__sc-1iwoe3s-1 dzbHte"}).findAll("li", {"class" :"at__sc-1iwoe3s-2 hGhRgM"}, recursive=False)
     time.sleep(5)
     carz =[]
-    
+
     for i in test:
-        empty_dict = dict.fromkeys(['make', 'price', 'year', 'reg', 'btpye', 'milage', 'enginesize', 'hp', 'gearbox', 'fueltype', 'doors'])
+        empty_dict = dict.fromkeys(['make', 'price', 'year', 'reg', 'body', 'milage', 'enginesize', 'bhp', 'gearbox', 'fueltype', 'doors'])
         make_car = i.find("h3", {"class" : "at__sc-1n64n0d-7 fcDnGr"})
         price_car = i.find("span", {"class" : "at__sc-1mc7cl3-5 edXwbj"})
         rest = i.find_all("li", {"class": "at__sc-1n64n0d-9 hYdVyl"})
+        doors_car = i.find("p", {"data-testid" : "search-listing-subtitle"})
+        
+        #check if all required data is present in the html element 
         if len(rest) < 7:
             print("bad data quality not enough values")
             continue
-        else:        
-            empty_dict['make'] = make_car 
-            empty_dict['price'] = price_car
-            empty_dict['year']= rest[0].get_text()
-            #empty_dict['reg'] =
-            empty_dict['btpye']= rest[1].get_text()
-            empty_dict['milage']= rest[2].get_text()
-            empty_dict['enginesize']= rest[3].get_text()
-            empty_dict['hp']= rest[4].get_text()
+        else:
+            #format price
+            p = price_car.get_text()
+            p = int(p.replace("£","").replace(",", ""))
+            
+            #format year and reg month
+            info = rest[0].get_text().split(" ")
+            y = int(info[0])
+            r = int(info[1].replace("(","").replace("reg)",""))
+            
+            #format milage
+            mi = rest[2].get_text()
+            mi = int(mi.replace(",", "").replace(" miles",""))
+            
+            #format engine size
+            es = float(rest[3].get_text().replace("L", ""))
+            
+            #recalculate brake horse power in if unit PS , reformat string to remove unit text
+            hp = rest[4].get_text()
+            if hp[-2:] == "PS":
+                ps = float(hp.replace("PS",""))
+                hp =  ps * 0.98632
+                hp = round(hp,4)
+            else:
+                hp = float(hp.replace("BHP",""))
+            
+            #format number of car doors 
+            door = doors_car.get_text()
+            d = re.search("\ddr", door)
+            d = int(d.group(0).replace("dr", ""))
+            
+            empty_dict['make'] = make_car.get_text()
+            empty_dict['price'] = p
+            empty_dict['year']= y
+            empty_dict['reg'] = r
+            empty_dict['body']= rest[1].get_text()
+            empty_dict['milage']= mi
+            empty_dict['enginesize']= es
+            empty_dict['bhp']= hp
             empty_dict['gearbox']= rest[5].get_text()
             empty_dict['fueltype']= rest[6].get_text()
-            #empty_dict['doors']=
+            empty_dict['doors']= d
             carz.append(empty_dict) # append dictionary of each car to carz list 
-    
-    print(carz)
-    
-    #TODO get all attributes of the cars from the classes
-    #TODO if attribute is missing , set it to null 
-     
-# class cars:
-#     def __init__(self, make='',price = '',year = '',reg = '',btpye='',
-#                  milage ='',enginesize= '',hp ='',gearbox ='',
-#                  fueltype ='', doors=''):
+    for i in carz:
+        print(i)
+
+#TODO function to click next page and repeat scraper function 
+#class cars:
+#     def __init__(self, make='', reg = '', year = '', price = '', enginesize= '', fueltype ='', gearbox ='', 
+#                  milage ='', hp ='', btype='', doors=''):
 #         self.make = make
-#         self.price = price 
-#         self.year = year
 #         self.reg = reg
-#         self.btype = btype
-#         self.milage = milage
+#         self.year = year
+#         self.price = price 
 #         self.enginesize = enginesize
-#         self.hp = hp
-#         self.gearbox = gearbox
 #         self.fueltype = fueltype
-#         self.doors = doors     
+#         self.gearbox = gearbox
+#         self.milage = milage 
+#         self.hp = hp
+#         self.btype = btype
+#         self.doors = doors
 
 def main():
     URL = userinput()
