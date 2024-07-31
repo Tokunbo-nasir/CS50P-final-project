@@ -43,25 +43,29 @@ def userinput():
             return URL1
         elif ans1 == 'no':
                 try:
-                    make = input("Which brand would you like to assess? ").lower()
-                    maxprice = input("What is your maximum budget? e.g(100000): ")
-                    milage = input("What is the maximum milage ? e.g (100000): ")
-                    year = input("What is the minimum year? e.g (2023): ")
-                    input_check(make, maxprice, milage, year)
-                    URL2 = f"https://www.autotrader.co.uk/car-search?make={make}&maximum-mileage={milage}&postcode=SW1A%201AA&price-to={maxprice}&sort=year-dsc&year-from={year}"
+                    in_year = input("What is the minimum year? e.g (2023): ")
+                    #in_make = input("Which brand would you like to assess? ").lower()
+                    in_milage = input("What is the maximum milage ? e.g (100000): ")
+                    in_maxprice = input("What is your maximum budget? e.g(100000): ")
+                    in_enginesize = input("What is the maximum engine size? e.g(3.4): ")
+                    in_hp = input("Maximum engine power? e.g(500)")
+                    input_check(in_year, in_milage, in_maxprice)
+                    URL2 = f"https://www.autotrader.co.uk/car-search?fuel-type=Diesel&fuel-type=Petrol%20Plug-in%20Hybrid&fuel-type=Diesel%20Plug-in%20Hybrid&fuel-\
+                    type=Petrol%20Hybrid&fuel-type=Diesel%20Hybrid&fuel-type=Petrol&max-engine-power={in_hp}&maximum-badge-engine-size={in_enginesize}&maximum-mileage={in_milage}&\
+                    postcode=SW1A%201AA&price-to={in_maxprice}&sort=relevance&year-from={in_year}"
+                    
                     return URL2
                 except ValueError:
                     print(f"Incorrect entry, please try again")
                     userinput()
 
 class cars:
-    def __init__(self, make='', reg = '', year = '', price = '', owners ='', enginesize= '', fueltype ='', gearbox ='', 
+    def __init__(self, make='', reg = '', year = '', price = '', enginesize= '', fueltype ='', gearbox ='', 
                  milage ='', hp ='', btype='', doors=''):
         self.make = make
         self.reg = reg
         self.year = year
         self.price = price 
-        self.owners = owners
         self.enginesize = enginesize
         self.fueltype = fueltype
         self.gearbox = gearbox
@@ -82,26 +86,37 @@ def scraper(url):
     driver.find_element(By.XPATH,"//button[text()='Accept All']").click()
     print(f"hello")
     
-    time.sleep(5)
-    
-    #TODO USE LIST TRAVERSAL VIDEO TO ITERATE THROUGH EACH ELEMENT AND CHECK THE NUMBER OF INNER ELEMENTS IF YES ADD TO DICTIONARY 
     '''Obtain the page source and use as an input for Beautiful soup'''
+    time.sleep(5)
     source = driver.page_source
     soup = BeautifulSoup(source, "html.parser")
     test = soup.find("ul", {"class" : "at__sc-1iwoe3s-1 dzbHte"}).findAll("li", {"class" :"at__sc-1iwoe3s-2 hGhRgM"}, recursive=False)
     time.sleep(5)
-    
     carz =[]
-    for i in test:
-        empty_dict = dict.fromkeys(['make', 'price', 'year', 'reg', 'btpye', 'milage', 'enginesize', 'hp', 'gearbox', 'fueltype', 'owners', 'doors'])
-        make_class = i.find("h3", {"class" : "at__sc-1n64n0d-7 fcDnGr"})
-        print(make_class)
-        #make_class = str(make_class)
-        #make_class1 = re.search(">.+<")
-        empty_dict['make'] = make_class #add make of each car to dictionary 
-        carz.append(empty_dict) # append dictionary of each car to carz list 
     
-    print(carz)
+    for i in test:
+        #empty_dict = dict.fromkeys(['make', 'price', 'year', 'reg', 'btpye', 'milage', 'enginesize', 'hp', 'gearbox', 'fueltype', 'doors'])
+        
+        #make_car = i.find("h3", {"class" : "at__sc-1n64n0d-7 fcDnGr"})
+        #price_car = i.find("span", {"class" : "at__sc-1mc7cl3-5 edXwbj"})
+        rest = i.find_all("li", {"class": "at__sc-1n64n0d-9 hYdVyl"})
+        for i in rest:
+            print(i.get_text())
+        
+        #empty_dict['make'] = make_car 
+        #empty_dict['price'] = price_car
+        #empty_dict['year']=
+        #empty_dict['reg'] =
+        #empty_dict['btpye']=
+        #empty_dict['milage']=
+        #empty_dict['enginesize']=
+        #empty_dict['hp']=
+        #empty_dict['gearbox']=
+        #empty_dict['fueltype']=
+        #empty_dict['doors']=
+        #carz.append(empty_dict) # append dictionary of each car to carz list 
+    
+    #print(carz)
     
     #TODO get all attributes of the cars from the classes
     #TODO if attribute is missing , set it to null 
@@ -109,7 +124,7 @@ def scraper(url):
 # class cars:
 #     def __init__(self, make='',price = '',year = '',reg = '',btpye='',
 #                  milage ='',enginesize= '',hp ='',gearbox ='',
-#                  fueltype ='',owners='', doors=''):
+#                  fueltype ='', doors=''):
 #         self.make = make
 #         self.price = price 
 #         self.year = year
@@ -120,7 +135,6 @@ def scraper(url):
 #         self.hp = hp
 #         self.gearbox = gearbox
 #         self.fueltype = fueltype
-#         self.owners = owners
 #         self.doors = doors     
 
 def main():
