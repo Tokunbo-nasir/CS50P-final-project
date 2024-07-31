@@ -5,7 +5,7 @@ import time
 import re
 
 def input_check(m,mp,mi,y):
-    make_list =['abarth' ,'ac' ,'aixam' , 'ak', 'alfa romeo', 'alpine', 'alvis', 
+    make_list =['abarth' ,'ac' ,'aixam' , 'ak', 'alfa romeo','all','alpine', 'alvis', 
                 'ariel', 'aston martin','auburn', 'audi', 'austin', 'bac', 'beauford',
                 'bentley', 'bmw', 'bristol', 'bugatti','buick', 'byd','cadillac','caterham',
                 'chesil','chevrolet','chrysler','citroen','corvette','cupra','custom vehicle',
@@ -44,15 +44,14 @@ def userinput():
         elif ans1 == 'no':
                 try:
                     in_year = input("What is the minimum year? e.g (2023): ")
-                    #in_make = input("Which brand would you like to assess? ").lower()
+                    in_make = input("Which brand would you like to assess? ").lower()
                     in_milage = input("What is the maximum milage ? e.g (100000): ")
                     in_maxprice = input("What is your maximum budget? e.g(100000): ")
                     in_enginesize = input("What is the maximum engine size? e.g(3.4): ")
                     in_hp = input("Maximum engine power? e.g(500)")
-                    input_check(in_year, in_milage, in_maxprice)
-                    URL2 = f"https://www.autotrader.co.uk/car-search?fuel-type=Diesel&fuel-type=Petrol%20Plug-in%20Hybrid&fuel-type=Diesel%20Plug-in%20Hybrid&fuel-\
-                    type=Petrol%20Hybrid&fuel-type=Diesel%20Hybrid&fuel-type=Petrol&max-engine-power={in_hp}&maximum-badge-engine-size={in_enginesize}&maximum-mileage={in_milage}&\
-                    postcode=SW1A%201AA&price-to={in_maxprice}&sort=relevance&year-from={in_year}"
+                    input_check(in_make,in_maxprice,in_milage,in_year,)
+                    
+                    URL2 = f"https://www.autotrader.co.uk/car-search?advertising-location=at_cars&fuel-type=Petrol&fuel-type=Diesel&fuel-type=Petrol%20Plug-in%20Hybrid&fuel-type=Diesel%20Plug-in%20Hybrid&fuel-type=Petrol%20Hybrid&fuel-type=Diesel%20Hybrid&max-engine-power={in_hp}&maximum-badge-engine-size={in_enginesize}&maximum-mileage={in_milage}&moreOptions=visible&postcode=SW1A%201AA&price-to={in_maxprice}&sort=relevance&year-from={in_year}"
                     
                     return URL2
                 except ValueError:
@@ -95,28 +94,28 @@ def scraper(url):
     carz =[]
     
     for i in test:
-        #empty_dict = dict.fromkeys(['make', 'price', 'year', 'reg', 'btpye', 'milage', 'enginesize', 'hp', 'gearbox', 'fueltype', 'doors'])
-        
-        #make_car = i.find("h3", {"class" : "at__sc-1n64n0d-7 fcDnGr"})
-        #price_car = i.find("span", {"class" : "at__sc-1mc7cl3-5 edXwbj"})
+        empty_dict = dict.fromkeys(['make', 'price', 'year', 'reg', 'btpye', 'milage', 'enginesize', 'hp', 'gearbox', 'fueltype', 'doors'])
+        make_car = i.find("h3", {"class" : "at__sc-1n64n0d-7 fcDnGr"})
+        price_car = i.find("span", {"class" : "at__sc-1mc7cl3-5 edXwbj"})
         rest = i.find_all("li", {"class": "at__sc-1n64n0d-9 hYdVyl"})
-        for i in rest:
-            print(i.get_text())
-        
-        #empty_dict['make'] = make_car 
-        #empty_dict['price'] = price_car
-        #empty_dict['year']=
-        #empty_dict['reg'] =
-        #empty_dict['btpye']=
-        #empty_dict['milage']=
-        #empty_dict['enginesize']=
-        #empty_dict['hp']=
-        #empty_dict['gearbox']=
-        #empty_dict['fueltype']=
-        #empty_dict['doors']=
-        #carz.append(empty_dict) # append dictionary of each car to carz list 
+        if len(rest) < 7:
+            print("bad data quality not enough values")
+            continue
+        else:        
+            empty_dict['make'] = make_car 
+            empty_dict['price'] = price_car
+            empty_dict['year']= rest[0].get_text()
+            #empty_dict['reg'] =
+            empty_dict['btpye']= rest[1].get_text()
+            empty_dict['milage']= rest[2].get_text()
+            empty_dict['enginesize']= rest[3].get_text()
+            empty_dict['hp']= rest[4].get_text()
+            empty_dict['gearbox']= rest[5].get_text()
+            empty_dict['fueltype']= rest[6].get_text()
+            #empty_dict['doors']=
+            carz.append(empty_dict) # append dictionary of each car to carz list 
     
-    #print(carz)
+    print(carz)
     
     #TODO get all attributes of the cars from the classes
     #TODO if attribute is missing , set it to null 
