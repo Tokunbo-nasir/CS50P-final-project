@@ -1,2 +1,2 @@
--- #TODO  annotated set of CREATE TABLE, CREATE INDEX, 
--- CREATE VIEW, etc. statements that compose your database’s schema.
+--TODO which is an annotated set of SELECT, INSERT, UPDATE, DELETE, etc. 
+--statements that users will commonly run on your database.
