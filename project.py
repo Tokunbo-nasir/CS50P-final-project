@@ -7,6 +7,8 @@ from bs4 import BeautifulSoup
 import time
 import re
 
+#script does not include fully electric cars because they have a different dataset spec sheet
+
 def input_check(m,mp,mi,y):
     #input error handling 
     make_list =['abarth' ,'ac' ,'aixam' , 'ak', 'alfa romeo','all','alpine', 'alvis', 
@@ -48,14 +50,18 @@ def userinput():
         elif ans1 == 'no':
                 try:
                     in_year = input("What is the minimum year? e.g (2023): ")
-                    in_make = input("Which brand would you like to assess? ").lower()
                     in_milage = input("What is the maximum milage ? e.g (100000): ")
                     in_maxprice = input("What is your maximum budget? e.g(100000): ")
                     in_enginesize = input("What is the maximum engine size? e.g(3.4): ")
                     in_hp = input("Maximum engine power? e.g(500)")
+                    in_make = input("Which brand would you like to assess? type all if this isn't required").lower()
                     input_check(in_make,in_maxprice,in_milage,in_year,)
-
-                    URL2 = f"https://www.autotrader.co.uk/car-search?advertising-location=at_cars&fuel-type=Petrol&fuel-type=Diesel&fuel-type=Petrol%20Plug-in%20Hybrid&fuel-type=Diesel%20Plug-in%20Hybrid&fuel-type=Petrol%20Hybrid&fuel-type=Diesel%20Hybrid&max-engine-power={in_hp}&maximum-badge-engine-size={in_enginesize}&maximum-mileage={in_milage}&moreOptions=visible&postcode=SW1A%201AA&price-to={in_maxprice}&sort=most-recent&year-from={in_year}"
+                    
+                    if in_make == "all":
+                        URL2 = f"https://www.autotrader.co.uk/car-search?advertising-location=at_cars&fuel-type=Petrol&fuel-type=Diesel&fuel-type=Petrol%20Plug-in%20Hybrid&fuel-type=Diesel%20Plug-in%20Hybrid&fuel-type=Petrol%20Hybrid&fuel-type=Diesel%20Hybrid&max-engine-power={in_hp}&maximum-badge-engine-size={in_enginesize}&maximum-mileage={in_milage}&moreOptions=visible&postcode=SW1A%201AA&price-to={in_maxprice}&sort=most-recent&year-from={in_year}"
+                    else:
+                        URL2 = f"https://www.autotrader.co.uk/car-search?advertising-location=at_cars&fuel-type=Petrol&fuel-type=Diesel&fuel-type=Petrol%20Plug-in%20Hybrid&fuel-type=Diesel%20Plug-in%20Hybrid&fuel-type=Petrol%20Hybrid&fuel-type=Diesel%20Hybrid&make={in_make}&max-engine-power={in_hp}&maximum-badge-engine-size={in_enginesize}&maximum-mileage={in_milage}&moreOptions=visible&postcode=SW1A%201AA&price-to={in_maxprice}&sort=most-recent&year-from={in_year}"
+                        
                     
                     return URL2
                 except ValueError:
