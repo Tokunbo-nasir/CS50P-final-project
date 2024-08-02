@@ -8,6 +8,7 @@ import time
 import re
 
 def input_check(m,mp,mi,y):
+    #input error handling 
     make_list =['abarth' ,'ac' ,'aixam' , 'ak', 'alfa romeo','all','alpine', 'alvis', 
                 'ariel', 'aston martin','auburn', 'audi', 'austin', 'bac', 'beauford',
                 'bentley', 'bmw', 'bristol', 'bugatti','buick', 'byd','cadillac','caterham',
@@ -86,8 +87,6 @@ def scraper(url):
             counter += 1
             url = url + "&page=" + page
             driver.get(url)
-            #driver.switch_to.frame("sp_message_iframe_1086457")
-            #driver.find_element(By.XPATH,"//button[text()='Accept All']").click()
             time.sleep(5)
             source = driver.page_source #source for second page 
              
