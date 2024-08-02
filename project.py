@@ -179,17 +179,17 @@ def scraper(url):
 #class cars:
 #     def __init__(self, make='', reg = '', year = '', price = '', enginesize= '', fueltype ='', gearbox ='', 
 #                  milage ='', hp ='', btype='', doors=''):
-#         self.make = make
-#         self.reg = reg
-#         self.year = year
-#         self.price = price 
-#         self.enginesize = enginesize
-#         self.fueltype = fueltype
-#         self.gearbox = gearbox
+#         self.make = make x
+#         self.reg = reg x
+#         self.year = year x
+#         self.price = price x
+#         self.enginesize = enginesize x
+#         self.fueltype = fueltype x
+#         self.gearbox = gearbox x
 #         self.milage = milage 
-#         self.hp = hp
-#         self.btype = btype
-#         self.doors = doors
+#         self.hp = hp x
+#         self.btype = btype x
+#         self.doors = doors x
 
 def main():
     URL = userinput()
