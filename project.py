@@ -36,7 +36,7 @@ def userinput():
                     userinput()
                     
 def input_check(m,mp,mi,y):
-    #input error handling 
+    '''Error handling for inputs'''
     make_list =['abarth' ,'ac' ,'aixam' , 'ak', 'alfa romeo','all','alpine', 'alvis', 
                 'ariel', 'aston martin','auburn', 'audi', 'austin', 'bac', 'beauford',
                 'bentley', 'bmw', 'bristol', 'bugatti','buick', 'byd','cadillac','caterham',
@@ -82,7 +82,7 @@ def scraper(url):
     '''Obtain the page source and use as an input for Beautiful soup'''
     counter = 1
     carz =[]
-    while counter < 3:
+    while counter < 10:
         page = f"{counter}"
         if counter == 1:
             counter += 1
