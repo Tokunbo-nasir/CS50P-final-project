@@ -1,4 +1,7 @@
 from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 import time
@@ -71,71 +74,104 @@ def scraper(url):
     print(f"hello")
     
     '''Obtain the page source and use as an input for Beautiful soup'''
-    time.sleep(5)
-    source = driver.page_source
-    soup = BeautifulSoup(source, "html.parser")
-    test = soup.find("ul", {"class" : "at__sc-1iwoe3s-1 dzbHte"}).findAll("li", {"class" :"at__sc-1iwoe3s-2 hGhRgM"}, recursive=False)
-    time.sleep(5)
+    counter = 1
     carz =[]
-
-    for i in test:
-        empty_dict = dict.fromkeys(['make', 'price', 'year', 'reg', 'body', 'milage', 'enginesize', 'bhp', 'gearbox', 'fueltype', 'doors'])
-        make_car = i.find("h3", {"class" : "at__sc-1n64n0d-7 fcDnGr"})
-        price_car = i.find("span", {"class" : "at__sc-1mc7cl3-5 edXwbj"})
-        rest = i.find_all("li", {"class": "at__sc-1n64n0d-9 hYdVyl"})
-        doors_car = i.find("p", {"data-testid" : "search-listing-subtitle"})
-        
-        #check if all required data is present in the html element 
-        if len(rest) < 7:
-            print("bad data quality not enough values")
-            continue
+    while counter < 3:
+        page = f"{counter}"
+        if counter == 1:
+            counter += 1
+            time.sleep(5)
+            source = driver.page_source #source for current page
         else:
-            #format price
-            p = price_car.get_text()
-            p = int(p.replace("£","").replace(",", ""))
-            
-            #format year and reg month
-            info = rest[0].get_text().split(" ")
-            y = int(info[0])
-            r = int(info[1].replace("(","").replace("reg)",""))
-            
-            #format milage
-            mi = rest[2].get_text()
-            mi = int(mi.replace(",", "").replace(" miles",""))
-            
-            #format engine size
-            es = float(rest[3].get_text().replace("L", ""))
-            
-            #recalculate brake horse power in if unit PS , reformat string to remove unit text
-            hp = rest[4].get_text()
-            if hp[-2:] == "PS":
-                ps = float(hp.replace("PS",""))
-                hp =  ps * 0.98632
-                hp = round(hp,4)
-            else:
-                hp = float(hp.replace("BHP",""))
-            
-            #format number of car doors 
-            door = doors_car.get_text()
-            d = re.search("\ddr", door)
-            d = int(d.group(0).replace("dr", ""))
-            
-            empty_dict['make'] = make_car.get_text()
-            empty_dict['price'] = p
-            empty_dict['year']= y
-            empty_dict['reg'] = r
-            empty_dict['body']= rest[1].get_text()
-            empty_dict['milage']= mi
-            empty_dict['enginesize']= es
-            empty_dict['bhp']= hp
-            empty_dict['gearbox']= rest[5].get_text()
-            empty_dict['fueltype']= rest[6].get_text()
-            empty_dict['doors']= d
-            carz.append(empty_dict) # append dictionary of each car to carz list 
-    for i in carz:
-        print(i)
+            counter += 1
+            url = url + "&page=" + page
+            driver.get(url)
+            #driver.switch_to.frame("sp_message_iframe_1086457")
+            #driver.find_element(By.XPATH,"//button[text()='Accept All']").click()
+            time.sleep(5)
+            source = driver.page_source #source for second page 
+             
+        soup = BeautifulSoup(source, "html.parser")
+        test = soup.find("ul", {"class" : "at__sc-1iwoe3s-1 dzbHte"}).findAll("li", {"class" :"at__sc-1iwoe3s-2 hGhRgM"}, recursive=False)
+        time.sleep(5)
 
-#TODO function to click next page and repeat scraper function 
+        for i in test:
+            empty_dict = dict.fromkeys(['make', 'price', 'year', 'reg', 'body', 'milage', 'enginesize', 'bhp', 'gearbox', 'fueltype', 'doors'])
+            make_car = i.find("h3", {"class" : "at__sc-1n64n0d-7 fcDnGr"})
+            price_car = i.find("span", {"class" : "at__sc-1mc7cl3-5 edXwbj"})
+            rest = i.find_all("li", {"class": "at__sc-1n64n0d-9 hYdVyl"})
+            doors_car = i.find("p", {"data-testid" : "search-listing-subtitle"})
+            
+            # check if all required data is present in the html element if not skip ad
+            # the code within the try block only works if the advert has the formmated as such :
+            # "2020 (73reg)| SUV | 6,000 miles | 3.0L | 520BHP | automatic | petrol" 
+            # additional information which includes the number of car doors e.g " any string 5dr"
+            # depending on the car type the values may be different
+            if len(rest) < 7:
+                print("bad data quality not enough values")
+                continue
+            else:
+                try:
+                    #format price
+                    p = price_car.get_text()
+                    p = int(p.replace("£","").replace(",", ""))
+                    
+                    #format year and reg month
+                    info = rest[0].get_text().split(" ")
+                    if len(info) > 1: #error handling in case year and reg are not specified as such 2020 (20 reg)
+                        y = int(info[0])
+                        r = int(info[1].replace("(","").replace("reg)",""))
+                    else:
+                        y = int(info[0])
+                        r = 0
+                    
+                    #format milage
+                    mi = rest[2].get_text()
+                    mi = int(mi.replace(",", "").replace(" miles",""))
+                    
+                    #format engine size
+                    es = float(rest[3].get_text().replace("L", ""))
+                    
+                    #recalculate brake horse power in if unit PS , reformat string to remove unit text
+                    hp = rest[4].get_text()
+                    if hp[-2:] == "PS":
+                        ps = float(hp.replace("PS",""))
+                        hp =  ps * 0.98632
+                        hp = round(hp,4)
+                    else:
+                        hp = float(hp.replace("BHP",""))
+                    
+                    #format number of car doors 
+                    door = doors_car.get_text()
+                    try:
+                        d = re.search("\ddr", door)
+                        d = int(d.group(0).replace("dr", ""))
+                    except AttributeError:
+                        d = 0
+                        continue
+                    
+                    empty_dict['make'] = make_car.get_text()
+                    empty_dict['price'] = p
+                    empty_dict['year']= y
+                    empty_dict['reg'] = r
+                    empty_dict['body']= rest[1].get_text()
+                    empty_dict['milage']= mi
+                    empty_dict['enginesize']= es
+                    empty_dict['bhp']= hp
+                    empty_dict['gearbox']= rest[5].get_text()
+                    empty_dict['fueltype']= rest[6].get_text()
+                    empty_dict['doors']= d
+                    
+                    carz.append(empty_dict) # append dictionary of each car to carz list
+                except ValueError:
+                    print("Ad skipped data missing or not in correct order") 
+                    # the code within the try block only works if the advert has the formmated as such "2020 (73reg)| SUV | 6,000 miles | 3.0L | 520BHP | automatic | petrol" and -
+                    # additional information which inclues the number of car doors e.g " any string 5dr" 
+                    continue        
+        for i in carz:
+            print(i)   
+
+
 #class cars:
 #     def __init__(self, make='', reg = '', year = '', price = '', enginesize= '', fueltype ='', gearbox ='', 
 #                  milage ='', hp ='', btype='', doors=''):
@@ -154,4 +190,5 @@ def scraper(url):
 def main():
     URL = userinput()
     scraper(URL)
+    
 main()
