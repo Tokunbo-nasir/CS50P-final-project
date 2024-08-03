@@ -1,14 +1,11 @@
 from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 import time
 import re
 
 #script does not include fully electric cars because they have a different dataset spec sheet
-#dev branch created
     
 def userinput():
     while True: 
@@ -82,6 +79,7 @@ def scraper(url):
     '''Obtain the page source and use as an input for Beautiful soup'''
     counter = 1
     carz =[]
+ 
     while counter < 10:
         page = f"{counter}"
         if counter == 1:
@@ -93,12 +91,15 @@ def scraper(url):
             url = url + "&page=" + page
             driver.get(url)
             time.sleep(5)
-            source = driver.page_source #source for second page 
-             
+            source = driver.page_source #source for consecutive page 
+        
+        #create beautiful soup object from source   
         soup = BeautifulSoup(source, "html.parser")
+        #Find all adverts based on the html class and tag 
         test = soup.find("ul", {"class" : "at__sc-1iwoe3s-1 dzbHte"}).findAll("li", {"class" :"at__sc-1iwoe3s-2 hGhRgM"}, recursive=False)
         time.sleep(5)
 
+        #loop through each advert on the page 
         for i in test:
             empty_dict = dict.fromkeys(['make', 'price', 'year', 'reg', 'body', 'milage', 'enginesize', 'bhp', 'gearbox', 'fueltype', 'doors'])
             make_car = i.find("h3", {"class" : "at__sc-1n64n0d-7 fcDnGr"})
@@ -154,6 +155,7 @@ def scraper(url):
                         d = 0
                         continue
                     
+                    #populate empty dict with details of current advert 
                     empty_dict['make'] = make_car.get_text()
                     empty_dict['price'] = p
                     empty_dict['year']= y
@@ -166,33 +168,38 @@ def scraper(url):
                     empty_dict['fueltype']= rest[6].get_text()
                     empty_dict['doors']= d
                     
-                    carz.append(empty_dict) # append dictionary of each car to carz list
+                    # append dictionary of each car to carz list
+                    carz.append(empty_dict) 
                 except ValueError:
                     print("Ad skipped data missing or not in correct order") 
                     # the code within the try block only works if the advert has the formmated as such "2020 (73reg)| SUV | 6,000 miles | 3.0L | 520BHP | automatic | petrol" and -
                     # additional information which inclues the number of car doors e.g " any string 5dr" 
                     continue        
-        for i in carz:
-            print(i)   
+        #for i in carz:
+            #print(i)
+    print(carz)
+    return carz
 
-
-#class cars:
-#     def __init__(self, make='', reg = '', year = '', price = '', enginesize= '', fueltype ='', gearbox ='', 
-#                  milage ='', hp ='', btype='', doors=''):
-#         self.make = make x
-#         self.reg = reg x
-#         self.year = year x
-#         self.price = price x
-#         self.enginesize = enginesize x
-#         self.fueltype = fueltype x
-#         self.gearbox = gearbox x
-#         self.milage = milage 
-#         self.hp = hp x
-#         self.btype = btype x
-#         self.doors = doors x
+def upload(cl):
+    #reformat each dictionary as a list to use as inputs for an insert SQL query 
+    for i in cl:
+        mk = i['make']
+        prc = i['price']
+        yr = i['year']
+        rg = i['reg']
+        bdy = i['body']
+        mil = i['milage']
+        eng = i['enginesize']
+        hpw = i['bhp']
+        gbx = i['gearbox']
+        ful = i['fueltype']
+        drs = i['doors']  
+        inputs = [mk, prc, yr, rg, bdy, mil, eng, hpw, gbx, ful, drs]      
+    
 
 def main():
     URL = userinput()
-    scraper(URL)
+    car_list = scraper(URL)
+    upload(car_list)
     
 main()
