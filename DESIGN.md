@@ -46,6 +46,10 @@ In this section you should answer the following questions:
 * Which entities will you choose to represent in your database?
 1) Body specifications of the car : visible parts of the car number of doors, type of gearbox (manual or automatic) e.t.c (see bodyspec table)
 
+2) General specifications of the car : This includes general information such as body type, price, milage , year and brand/make.
+
+3) Engine specifications of the car: This is the information that outlines the performance / non-visible aspects of the car such as engine size, horsepower, & fuel type.
+
 * What attributes will those entities have?
 1) bodytype: e.g saloon, coupe, SUV , hatchback, estate etc
 2) doors: (number of doors the car has , including the boot door)
@@ -74,6 +78,20 @@ The only constraint is on the datetime column in the carspec table which sets th
 ### Relationships
 
 In this section you should include your entity relationship diagram and describe the relationships between the entities in your database.
+
+![ER diagram cars](Entity relationship diagram.png)
+
+carspec.body_id to bodyspec.id:
+This is a one-to-many relationship where each carspec record references a specific bodyspec record via body_id. This means that a car specification can have one set of body specifications.
+
+carspec.engine_id to enginespec.id:
+This is also a one-to-many relationship where each carspec record references a specific enginespec record via engine_id. This indicates that a car specification can have one set of engine specifications.
+
+The carspec entity is the central table holding detailed specifications of cars.
+
+The bodyspec and enginespec entities store detailed specifications about car bodies and engines, respectively.
+
+Relationships are established via foreign keys (body_id and engine_id) in the carspec entity, linking each car specification to its corresponding body and engine specifications.
 
 ## Optimizations
 
