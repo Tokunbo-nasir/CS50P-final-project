@@ -20,7 +20,7 @@ def userinput():
                     in_milage = input("What is the maximum milage ? e.g (100000): ")
                     in_maxprice = input("What is your maximum budget? e.g(100000): ")
                     in_enginesize = input("What is the maximum engine size? e.g(3.4): ")
-                    in_hp = input("Maximum engine power? e.g(500)")
+                    in_hp = input("Maximum engine power? e.g(500): ")
                     in_make = input("Which brand would you like to assess? type all if this isn't required: ").lower()
                     input_check(in_make,in_maxprice,in_milage,in_year,)
                     
@@ -67,15 +67,20 @@ def input_check(m,mp,mi,y):
 
 def scraper(url, total):
     '''Use selenium to open a broswer page and click the accept cookies button'''
+    #setup the chromedriver
     options = webdriver.ChromeOptions()
     options.add_experimental_option("detach", True)
     options.add_argument("--disable-webusb")
     options.add_experimental_option('excludeSwitches', ['enable-logging'])
     driver = webdriver.Chrome(options=options)
+    
+    #open the genrated url on a chrome browser
     driver.get(url)
+    
+    #switch to an iframe within the html code to be able to click the "accept cookies button"
     driver.switch_to.frame("sp_message_iframe_1086457")
-    driver.find_element(By.XPATH,"//button[text()='Accept All']").click()
-    print(f"hello")
+    driver.find_element(By.XPATH,"//button[text()='Accept All']").click() #click accept cookies
+    print(f"Hello, data extraction has begun, please wait")
     
     '''Obtain the page source and use as an input for Beautiful soup'''
     counter = 0
