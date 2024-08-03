@@ -65,7 +65,7 @@ def input_check(m,mp,mi,y):
     else:
         return True
 
-def scraper(url):
+def scraper(url, total):
     '''Use selenium to open a broswer page and click the accept cookies button'''
     options = webdriver.ChromeOptions()
     options.add_experimental_option("detach", True)
@@ -81,7 +81,7 @@ def scraper(url):
     counter = 0
     carz =[]
  
-    while counter < 3:
+    while counter < total:
         page = str(counter)
         if counter == 0:
             counter += 1
@@ -226,15 +226,16 @@ def upload(cl):
         sqlup1 = "UPDATE `carspec` JOIN `bodyspec` ON `bodyspec`.`id`=`carspec`.`id` SET `carspec`.`body_id` = `bodyspec`.`id`"
         sqlup2 = "UPDATE `carspec` JOIN `enginespec` ON `enginespec`.`id`=`carspec`.`id` SET `carspec`.`engine_id` = `enginespec`.`id`"
         
+        #execute queries
         mycursor.execute(sqlup1)
         mycursor.execute(sqlup2)
         
         mydb.commit()
     
-
 def main():
+    #TODO SET DEFAULT CRITERIA SO SCRIPT CAN RUN AUTOMATICALLY 
     URL = userinput()
-    car_list = scraper(URL)
-    upload(car_list)
-    
+    p = int(input("How many pages would you like to parse through? e.g 10:  "))
+    car_list = scraper(URL, p)
+    upload(car_list)  
 main()
