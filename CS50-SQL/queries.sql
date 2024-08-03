@@ -21,3 +21,18 @@ SELECT `make`, `year`,`price` ,`bodytype`
 FROM `alltables` 
 WHERE `year` BETWEEN '2014' AND '2024'
 ORDER BY `bodytype`,`milage` ASC, `year` ASC ;
+
+--2) What is the cheapest car with the largest engine 
+
+SELECT `carspec`.`make`,`enginespec`.`enginesize`, `carspec`.`price` 
+FROM `carspec`
+JOIN `enginespec` ON `carspec`.`engine_id` = `enginespec`.`id`
+ORDER BY `enginespec`.`enginesize` DESC, `carspec`.`price` ASC
+LIMIT 1 ;
+
+
+--3) What is the average price of each shape / size of car ?
+
+SELECT AVG(`price`) AS `average price`, `bodytype` 
+FROM `alltables`
+GROUP BY `bodytype`;
