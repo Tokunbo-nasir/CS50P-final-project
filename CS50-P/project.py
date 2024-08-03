@@ -234,6 +234,8 @@ def upload(cl):
         mycursor.execute(sqlup2)
         
         mydb.commit()
+        
+        print("Data succesfully inserted into cars database")
     
 def main():
     #TODO SET DEFAULT CRITERIA SO SCRIPT CAN RUN AUTOMATICALLY 
