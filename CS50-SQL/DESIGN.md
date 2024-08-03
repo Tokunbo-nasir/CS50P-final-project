@@ -1,6 +1,6 @@
 # Design Document
 
-Nasir Adetokunbo Nasir
+By Nasir Adetokunbo Nasir
 
 Video overview: <URL HERE>
 
