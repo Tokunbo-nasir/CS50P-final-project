@@ -240,7 +240,7 @@ def upload(cl):
         
         mydb.commit()
         
-        print("Data succesfully inserted into cars database")
+    print("Data succesfully inserted into cars database")
     
 def main():
     #TODO SET DEFAULT CRITERIA SO SCRIPT CAN RUN AUTOMATICALLY 
