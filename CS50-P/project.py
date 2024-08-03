@@ -76,7 +76,7 @@ def scraper(url, total):
     
     #open the genrated url on a chrome browser
     driver.get(url)
-    
+    time.sleep(2)
     #switch to an iframe within the html code to be able to click the "accept cookies button"
     driver.switch_to.frame("sp_message_iframe_1086457")
     driver.find_element(By.XPATH,"//button[text()='Accept All']").click() #click accept cookies
@@ -94,7 +94,7 @@ def scraper(url, total):
             source = driver.page_source #source for current page
         else:
             counter += 1
-            pattern = "&page=\d"                    # use regex for find part of url string that handles the current page 
+            pattern = "&page=\d+"                    # use regex for find part of url string that handles the current page 
             replacement = f"&page={page}"           # replace with the next page 
             url = re.sub(pattern, replacement, url )
             
