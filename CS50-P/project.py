@@ -89,7 +89,10 @@ def scraper(url, total):
             source = driver.page_source #source for current page
         else:
             counter += 1
-            url = url + "&page=" + page
+            pattern = "&page=\d"                    # use regex for find part of url string that handles the current page 
+            replacement = f"&page={page}"           # replace with the next page 
+            url = re.sub(pattern, replacement, url )
+            
             print(f"Parsing page {page}")
             driver.get(url)
             time.sleep(2)
@@ -239,3 +242,4 @@ def main():
     car_list = scraper(URL, p)
     upload(car_list)  
 main()
+
