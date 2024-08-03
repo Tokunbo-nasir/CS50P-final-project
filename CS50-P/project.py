@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 import time
 import re
+import mysql.connector
 
 #script does not include fully electric cars because they have a different dataset spec sheet
     
@@ -77,27 +78,28 @@ def scraper(url):
     print(f"hello")
     
     '''Obtain the page source and use as an input for Beautiful soup'''
-    counter = 1
+    counter = 0
     carz =[]
  
-    while counter < 10:
-        page = f"{counter}"
-        if counter == 1:
+    while counter < 3:
+        page = str(counter)
+        if counter == 0:
             counter += 1
-            time.sleep(5)
+            time.sleep(2)
             source = driver.page_source #source for current page
         else:
             counter += 1
             url = url + "&page=" + page
+            print(f"Parsing page {page}")
             driver.get(url)
-            time.sleep(5)
+            time.sleep(2)
             source = driver.page_source #source for consecutive page 
         
         #create beautiful soup object from source   
         soup = BeautifulSoup(source, "html.parser")
         #Find all adverts based on the html class and tag 
         test = soup.find("ul", {"class" : "at__sc-1iwoe3s-1 dzbHte"}).findAll("li", {"class" :"at__sc-1iwoe3s-2 hGhRgM"}, recursive=False)
-        time.sleep(5)
+        time.sleep(2)
 
         #loop through each advert on the page 
         for i in test:
@@ -113,7 +115,7 @@ def scraper(url):
             # additional information which includes the number of car doors e.g " any string 5dr"
             # depending on the car type the values may be different
             if len(rest) < 7:
-                print("bad data quality not enough values")
+                print("Bad data quality not enough values skipping advert")
                 continue
             else:
                 try:
@@ -171,7 +173,7 @@ def scraper(url):
                     # append dictionary of each car to carz list
                     carz.append(empty_dict) 
                 except ValueError:
-                    print("Ad skipped data missing or not in correct order") 
+                    print("Ad skipped data missing or not in correct order skipping advert") 
                     # the code within the try block only works if the advert has the formmated as such "2020 (73reg)| SUV | 6,000 miles | 3.0L | 520BHP | automatic | petrol" and -
                     # additional information which inclues the number of car doors e.g " any string 5dr" 
                     continue        
@@ -194,7 +196,40 @@ def upload(cl):
         gbx = i['gearbox']
         ful = i['fueltype']
         drs = i['doors']  
-        inputs = [mk, prc, yr, rg, bdy, mil, eng, hpw, gbx, ful, drs]      
+        inp_body = [bdy, gbx, drs]
+        inp_eng = [eng, ful, hpw]
+        inp_car = [mk, rg, yr, prc, mil]
+        
+        #connect to database
+        mydb = mysql.connector.connect(
+            host="localhost",
+            user="Nasir",
+            password="root",
+            database="cars"
+            )
+        #create cursor object for database
+        mycursor = mydb.cursor()
+        
+        #sql insert queries
+        sqlbody="INSERT INTO bodyspec(bodytype, doors, gearbox) VALUES(%s, %s, %s)"  
+        sqleng="INSERT INTO enginespec(enginesize, fueltype, horsepower) VALUES(%s, %s, %s)" 
+        sqlcar ="INSERT INTO carspec(make, reg, year, price, milage) VALUES(%s, %s, %s, %s, %s)"
+        
+        #execute queries
+        mycursor.execute(sqlbody, inp_body)
+        mycursor.execute(sqleng, inp_eng)
+        mycursor.execute(sqlcar, inp_car)
+        
+        mydb.commit()
+        
+        #queries to update foreign keys engine_id & body_id in the carspec table
+        sqlup1 = "UPDATE `carspec` JOIN `bodyspec` ON `bodyspec`.`id`=`carspec`.`id` SET `carspec`.`body_id` = `bodyspec`.`id`"
+        sqlup2 = "UPDATE `carspec` JOIN `enginespec` ON `enginespec`.`id`=`carspec`.`id` SET `carspec`.`engine_id` = `enginespec`.`id`"
+        
+        mycursor.execute(sqlup1)
+        mycursor.execute(sqlup2)
+        
+        mydb.commit()
     
 
 def main():
