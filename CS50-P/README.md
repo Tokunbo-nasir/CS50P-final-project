@@ -36,7 +36,7 @@ import mysql.connector (to upload scraped data to a mysql server)
 
     Answering "semi-automated" is will automatically populate all the variables with the widest range of specifications.
     It will also select consecutive car brands in the "make_list" by using the "runs" variable. 
-    Each time the script is run, and thios option is selected a number in an external "run_counter.txt" file is incremented. 
+    Each time the script is run, and this option "semi-automated" is selected a number in an external "run_counter.txt" file is incremented. 
     This is good if you want the maximum amount of results for each car brand. 
 
     After all the inputs are entered...
