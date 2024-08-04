@@ -59,9 +59,10 @@ def userinput():
         elif ans1 == 'semi automated':
             #Run script multiple times to get a 100 pages of adverts for all car brands  
             #Each time "semi-automated" is selected it will move onto the next car brand in the "make_list" list    
-            if not os.path.exists: #check if file that counts how many time script has been run, exists.
+            if os.path.exists ("run_counter.txt")  == False:     #check if file that counts how many time script has been run, exists
                 with open("run_counter.txt", "w") as mc:
                     mc.write("0")
+                    runs = int(mc.read()) 
             else:
                 with open("run_counter.txt", "r") as mc:
                     runs = int(mc.read()) #assign variable to show how many times script has been run not including the present execution.
