@@ -118,7 +118,9 @@ def scraper(url, total):
             #Find all adverts based on the html class and tag 
             test = soup.find("ul", {"class" : "at__sc-1iwoe3s-1 dzbHte"}).findAll("li", {"class" :"at__sc-1iwoe3s-2 hGhRgM"}, recursive=False)
             time.sleep(2)
-        except NoSuchElementException:  #error handling for when the adverts are no longer on the page
+            if len(test) < 2:
+                raise TypeError
+        except TypeError:  #error handling for when the adverts are no longer on the page
             print ("Final page has been reached")
             break
             
