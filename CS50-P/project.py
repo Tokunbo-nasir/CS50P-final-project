@@ -83,13 +83,15 @@ def scraper(url, total):
     print(f"Hello, data extraction has begun, please wait")
     
     '''Obtain the page source and use as an input for Beautiful soup'''
-    counter = 0
+    counter = 1
     carz =[]
  
-    while counter < total:
+    while counter <= total:
         page = str(counter)
-        if counter == 0:
+        results = 0 #used to keep track of how many adverts have been parsed without error
+        if counter == 1:
             counter += 1
+            print(f"Parsing page {page}")
             time.sleep(2)
             source = driver.page_source #source for current page
         else:
@@ -178,6 +180,7 @@ def scraper(url, total):
                     empty_dict['fueltype']= rest[6].get_text()
                     empty_dict['doors']= d
                     
+                    results += 1
                     # append dictionary of each car to carz list
                     carz.append(empty_dict) 
                 except ValueError:
@@ -185,8 +188,8 @@ def scraper(url, total):
                     # the code within the try block only works if the advert has the formmated as such "2020 (73reg)| SUV | 6,000 miles | 3.0L | 520BHP | automatic | petrol" and -
                     # additional information which inclues the number of car doors e.g " any string 5dr" 
                     continue        
-        #for i in carz:
-            #print(i)
+        #print how many succesful adverts were parsed on the page 
+        print(f"{results} adverts were extracted on this page")
     print(carz)
     return carz
 
@@ -204,7 +207,7 @@ def upload(cl):
         gbx = i['gearbox']
         ful = i['fueltype']
         drs = i['doors']  
-        inp_body = [bdy, gbx, drs]
+        inp_body = [bdy, drs, gbx]
         inp_eng = [eng, ful, hpw]
         inp_car = [mk, rg, yr, prc, mil]
         
