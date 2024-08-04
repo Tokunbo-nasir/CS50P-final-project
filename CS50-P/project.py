@@ -10,18 +10,18 @@ import mysql.connector
     
 def userinput():
     while True: 
-        ans1 = input("Do you want to search all cars with no specifications? (Yes or No)").lower()
-        if ans1 == 'yes':
+        ans1 = input("Do you want to specify the type of car you want? (Yes or No): ").lower()
+        if ans1 == 'no':
             URL1 = "https://www.autotrader.co.uk/car-search?postcode=SW1A%201AA&sort=year-dsc"
             return URL1
-        elif ans1 == 'no':
+        elif ans1 == 'yes':
                 try:
                     in_year = input("What is the minimum year? e.g (2023): ")
                     in_milage = input("What is the maximum milage ? e.g (100000): ")
                     in_maxprice = input("What is your maximum budget? e.g(100000): ")
                     in_enginesize = input("What is the maximum engine size? e.g(3.4): ")
                     in_hp = input("Maximum engine power? e.g(500): ")
-                    in_make = input("Which brand would you like to assess? type all if this isn't required: ").lower()
+                    in_make = input("Which brand would you like to assess? type 'all' if you're not picky: ").lower()
                     input_check(in_make,in_maxprice,in_milage,in_year,)
                     
                     if in_make == "all":
