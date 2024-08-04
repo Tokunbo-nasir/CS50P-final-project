@@ -6,7 +6,14 @@ import time
 import re
 import mysql.connector
 
-#script does not include fully electric cars because they have a different dataset spec sheet
+#Script does not include fully electric cars because they have a different dataset spec sheet
+#Autotrader is limited to 100 pages of results.
+
+#If "all" is selected as an input yu will get 100 pages of different car brands 
+#If a larger data set is required each brand can be selected by the user.
+#That is 100 pages of adverts for each specific brand the user wants to assess.
+
+#All the data is appended to the MySQL database
     
 def userinput():
     while True: 
