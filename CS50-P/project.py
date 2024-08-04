@@ -1,6 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.by import By
+from selenium.common.exceptions import NoSuchElementException
 from bs4 import BeautifulSoup
 import time
 import re
@@ -52,7 +52,7 @@ def input_check(m,mp,mi,y):
                 'polestar','pontiac','porsche','proton','radical','rage','rayvolution','rcr',
                 'reliant','renault','replica','reva','riley','robin hood','rolls-royce','rover',
                 'royale','saab','seat','sebring','shelby','skoda','smart','ssangyong','subaru',
-                'sunbeam','suzuki','tesla','tiger','toyota','triumph','tvr','ultima','vauxhall',
+                'sunbeam','suzuki','tiger','toyota','triumph','tvr','ultima','vauxhall',
                 'volkswagen','volvo','westfield','yamaha','zenos']
     if m not in make_list:
         return ValueError
@@ -105,11 +105,16 @@ def scraper(url, total):
             time.sleep(2)
             source = driver.page_source #source for consecutive page 
         
-        #create beautiful soup object from source   
-        soup = BeautifulSoup(source, "html.parser")
-        #Find all adverts based on the html class and tag 
-        test = soup.find("ul", {"class" : "at__sc-1iwoe3s-1 dzbHte"}).findAll("li", {"class" :"at__sc-1iwoe3s-2 hGhRgM"}, recursive=False)
-        time.sleep(2)
+        try:
+            #create beautiful soup object from source   
+            soup = BeautifulSoup(source, "html.parser")
+            #Find all adverts based on the html class and tag 
+            test = soup.find("ul", {"class" : "at__sc-1iwoe3s-1 dzbHte"}).findAll("li", {"class" :"at__sc-1iwoe3s-2 hGhRgM"}, recursive=False)
+            time.sleep(2)
+        except NoSuchElementException:  #error handling for when the adverts are no longer on the page
+            print ("Final page has been reached")
+            break
+            
 
         #loop through each advert on the page 
         for i in test:
@@ -190,6 +195,7 @@ def scraper(url, total):
                     continue        
         #print how many succesful adverts were parsed on the page 
         print(f"{results} adverts were extracted on this page")
+        
     print(carz)
     return carz
 
