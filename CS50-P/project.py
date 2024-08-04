@@ -5,44 +5,13 @@ from bs4 import BeautifulSoup
 import time
 import re
 import mysql.connector
+import os
 
 #Script does not include fully electric cars because they have a different dataset spec sheet
 #Autotrader is limited to 100 pages of results.
 
-#If "all" is selected as an input yu will get 100 pages of different car brands 
-#If a larger data set is required each brand can be selected by the user.
-#That is 100 pages of adverts for each specific brand the user wants to assess.
-
 #All the data is appended to the MySQL database
-    
-def userinput():
-    while True: 
-        ans1 = input("Do you want to specify the type of car you want? (Yes or No): ").lower()
-        if ans1 == 'no':
-            URL1 = "https://www.autotrader.co.uk/car-search?postcode=SW1A%201AA&sort=year-dsc"
-            return URL1
-        elif ans1 == 'yes':
-                try:
-                    in_year = input("What is the minimum year? e.g (2023): ")
-                    in_milage = input("What is the maximum milage ? e.g (100000): ")
-                    in_maxprice = input("What is your maximum budget? e.g(100000): ")
-                    in_enginesize = input("What is the maximum engine size? e.g(3.4): ")
-                    in_hp = input("Maximum engine power? e.g(500): ")
-                    in_make = input("Which brand would you like to assess? type 'all' if you're not picky: ").lower()
-                    input_check(in_make,in_maxprice,in_milage,in_year,)
-                    
-                    if in_make == "all":
-                        URL2 = f"https://www.autotrader.co.uk/car-search?advertising-location=at_cars&fuel-type=Petrol&fuel-type=Diesel&fuel-type=Petrol%20Plug-in%20Hybrid&fuel-type=Diesel%20Plug-in%20Hybrid&fuel-type=Petrol%20Hybrid&fuel-type=Diesel%20Hybrid&max-engine-power={in_hp}&maximum-badge-engine-size={in_enginesize}&maximum-mileage={in_milage}&moreOptions=visible&postcode=SW1A%201AA&price-to={in_maxprice}&sort=most-recent&year-from={in_year}&page=1"
-                    else:
-                        URL2 = f"https://www.autotrader.co.uk/car-search?advertising-location=at_cars&fuel-type=Petrol&fuel-type=Diesel&fuel-type=Petrol%20Plug-in%20Hybrid&fuel-type=Diesel%20Plug-in%20Hybrid&fuel-type=Petrol%20Hybrid&fuel-type=Diesel%20Hybrid&make={in_make}&max-engine-power={in_hp}&maximum-badge-engine-size={in_enginesize}&maximum-mileage={in_milage}&moreOptions=visible&postcode=SW1A%201AA&price-to={in_maxprice}&sort=most-recent&year-from={in_year}&page=1"
-                    return URL2
-                except ValueError:
-                    print(f"Incorrect entry, please try again")
-                    userinput()
-                    
-def input_check(m,mp,mi,y):
-    '''Error handling for inputs'''
-    make_list =['abarth' ,'ac' ,'aixam' , 'ak', 'alfa romeo','all','alpine', 'alvis', 
+make_list =['abarth' ,'ac' ,'aixam' , 'ak', 'alfa romeo','all','alpine', 'alvis', 
                 'ariel', 'aston martin','auburn', 'audi', 'austin', 'bac', 'beauford',
                 'bentley', 'bmw', 'bristol', 'bugatti','buick', 'byd','cadillac','caterham',
                 'chesil','chevrolet','chrysler','citroen','corvette','cupra','custom vehicle',
@@ -61,6 +30,58 @@ def input_check(m,mp,mi,y):
                 'royale','saab','seat','sebring','shelby','skoda','smart','ssangyong','subaru',
                 'sunbeam','suzuki','tiger','toyota','triumph','tvr','ultima','vauxhall',
                 'volkswagen','volvo','westfield','yamaha','zenos']
+    
+def userinput():
+    while True: 
+        ans1 = input("Do you want to specify the type of car you want? (Yes, No, Semi automated): ").lower()
+        if ans1 == 'no':
+            URL1 = "https://www.autotrader.co.uk/car-search?postcode=SW1A%201AA&sort=year-dsc&page=1"
+            return URL1
+        elif ans1 == 'yes':
+                try:
+                    in_year = input("What is the minimum year? e.g (2023): ")
+                    in_milage = input("What is the maximum milage ? e.g (100000): ")
+                    in_maxprice = input("What is your maximum budget? e.g(100000): ")
+                    in_enginesize = input("What is the maximum engine size? e.g(3.4): ")
+                    in_hp = input("Maximum engine power? e.g(500): ")
+                    in_make =  input("Which brand would you like to assess? type 'all' if you're not picky: ").lower()
+                    input_check(in_make,in_maxprice,in_milage,in_year,)
+                    
+                    if in_make == "all":
+                        URL2 = f"https://www.autotrader.co.uk/car-search?advertising-location=at_cars&fuel-type=Petrol&fuel-type=Diesel&fuel-type=Petrol%20Plug-in%20Hybrid&fuel-type=Diesel%20Plug-in%20Hybrid&fuel-type=Petrol%20Hybrid&fuel-type=Diesel%20Hybrid&max-engine-power={in_hp}&maximum-badge-engine-size={in_enginesize}&maximum-mileage={in_milage}&moreOptions=visible&postcode=SW1A%201AA&price-to={in_maxprice}&sort=most-recent&year-from={in_year}&page=1"
+                    else:
+                        URL2 = f"https://www.autotrader.co.uk/car-search?advertising-location=at_cars&fuel-type=Petrol&fuel-type=Diesel&fuel-type=Petrol%20Plug-in%20Hybrid&fuel-type=Diesel%20Plug-in%20Hybrid&fuel-type=Petrol%20Hybrid&fuel-type=Diesel%20Hybrid&make={in_make}&max-engine-power={in_hp}&maximum-badge-engine-size={in_enginesize}&maximum-mileage={in_milage}&moreOptions=visible&postcode=SW1A%201AA&price-to={in_maxprice}&sort=most-recent&year-from={in_year}&page=1"
+                    make_index += 1
+                    return URL2
+                except ValueError:
+                    print(f"Incorrect entry, please try again")
+                    userinput()
+        elif ans1 == 'semi automated':
+            #Run script multiple times to get a 100 pages of adverts for all car brands  
+            #Each time "semi-automated" is selected it will move onto the next car brand in the "make_list" list    
+            if not os.path.exists: #check if file that counts how many time script has been run, exists.
+                with open("run_counter.txt", "w") as mc:
+                    mc.write("0")
+            else:
+                with open("run_counter.txt", "r") as mc:
+                    runs = int(mc.read()) #assign variable to show how many times script has been run not including the present execution.
+                       
+            in_year = '1900' 
+            in_milage = '200000' 
+            in_maxprice = '2000000' 
+            in_enginesize = '7.0' 
+            in_hp = '2000' 
+            in_make =  make_list[runs] 
+            URL3 = f"https://www.autotrader.co.uk/car-search?advertising-location=at_cars&fuel-type=Petrol&fuel-type=Diesel&fuel-type=Petrol%20Plug-in%20Hybrid&fuel-type=Diesel%20Plug-in%20Hybrid&fuel-type=Petrol%20Hybrid&fuel-type=Diesel%20Hybrid&make={in_make}&max-engine-power={in_hp}&maximum-badge-engine-size={in_enginesize}&maximum-mileage={in_milage}&moreOptions=visible&postcode=SW1A%201AA&price-to={in_maxprice}&sort=most-recent&year-from={in_year}&page=1"
+            
+            runs += 1 #increment runs by 1 and write back to run counter file 
+            with open("run_counter.txt", "w") as mc:
+                    mc.write(str(runs))
+            return URL3 #return the URL with the changed car make/brand 
+            
+                    
+def input_check(m,mp,mi,y):
+    '''Error handling for inputs'''
     if m not in make_list:
         return ValueError
     elif mp.isnumeric() == False:
@@ -99,7 +120,7 @@ def scraper(url, total):
         if counter == 1:
             counter += 1
             print(f"Parsing page {page}")
-            time.sleep(2)
+            time.sleep(1)
             source = driver.page_source #source for current page
         else:
             counter += 1
@@ -109,7 +130,7 @@ def scraper(url, total):
             
             print(f"Parsing page {page}")
             driver.get(url)
-            time.sleep(2)
+            time.sleep(1)
             source = driver.page_source #source for consecutive page 
         
         try:
@@ -117,7 +138,7 @@ def scraper(url, total):
             soup = BeautifulSoup(source, "html.parser")
             #Find all adverts based on the html class and tag 
             test = soup.find("ul", {"class" : "at__sc-1iwoe3s-1 dzbHte"}).findAll("li", {"class" :"at__sc-1iwoe3s-2 hGhRgM"}, recursive=False)
-            time.sleep(2)
+            time.sleep(1)
             if len(test) < 2:
                 raise TypeError
         except TypeError:  #error handling for when the adverts are no longer on the page
@@ -261,9 +282,9 @@ def upload(cl):
     print("Data succesfully inserted into cars database")
     
 def main():
-    #TODO SET DEFAULT CRITERIA SO SCRIPT CAN RUN AUTOMATICALLY 
+    #TODO SET DEFAULT CRITERIA SO SCRIPT CAN RUN AUTOMATICALLY
     URL = userinput()
-    p = int(input("How many pages would you like to parse through? e.g 10:  "))
+    p = int(input("How many pages would you like to parse through? e.g 10 (max 100):  "))
     car_list = scraper(URL, p)
     upload(car_list)  
 main()

@@ -20,11 +20,12 @@ import mysql.connector (to upload scraped data to a mysql server)
 
 3b) A while loop & try/except block is used for error handling of the input
 
-3c) The first question is "Do you want to search all cars with no specifications? (Yes or No)"
+3c) The first question is "Do you want to specify the type of car you want? (Yes or No)"
 
-    Answering yes will return a basic url for the autotrader search website without any specifications
+    Answering no will return a generic URL without any specifications for the autotrader search website with the widest range of specifications.
 
-    Answering no will prompt the user to answer multiple questions based on the type of car they are looking for, all the user inputs are assigned to  variables.
+    Answering yes will prompt the user to answer multiple questions based on the type of car they are looking for, 
+    All the user inputs are assigned to  variables, this way the user can narrow down their results.
 
     "What is the minimum year? e.g (2023): "
     "What is the maximum milage ? e.g (100000): "
@@ -33,13 +34,18 @@ import mysql.connector (to upload scraped data to a mysql server)
     "Maximum engine power? e.g(500): "
     "Which brand would you like to assess? type all if this isn't required: " (this input is converted to lower case)
 
+    Answering "semi-automated" is will automatically populate all the variables with the widest range of specifications.
+    It will also select consecutive car brands in the "make_list" by using the "runs" variable. 
+    Each time the script is run, and thios option is selected a number in an external "run_counter.txt" file is incremented. 
+    This is good if you want the maximum amount of results for each car brand. 
+
     After all the inputs are entered...
 
 4)The "input_check()" function is called within a try except block which will print "Incorrect entry, please try again" if the function returns a ValueError. In this case the function "userinput()" is called again.
 
 4a) There are 4 inputs for this function m,mp,mi,y representing "make", "max price of the car" , " max milage" , "minimum year".
 
-4b) Witihin the input_check() function, a list called "make_list"  which contains all the car brands/makes on the autotrader website.
+4b) Witihin the input_check() function, it checks a list called "make_list"  which contains all the car brands/makes on the autotrader website.
 
 4c) Next 4 if & elif statements check the inputs match certain criteria , if the inputs do not they return a ValueError (see explanation in no. 4).
 
@@ -56,6 +62,7 @@ import mysql.connector (to upload scraped data to a mysql server)
 6) Within the "main" function
 
 6a)The user is asked how many pages of results would they like to parse through on the auto trader website this is assigned to the variable "p"
+   The maximum on the website is 100 pages of results 
 
 7) The "scraper" function is called within the main function
 7a) Purpose: This take the URL generated in (no. 5) as an argument  and the number of pages "total" (No. 6a) and parses through each advert on each page extracting the required data.
