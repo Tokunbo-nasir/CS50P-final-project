@@ -1,7 +1,9 @@
 # Autotrader webscraper
 #### Video Demo:  <URL HERE>
 #### Description:
-The autotrader webscraper utilises selenium webdriver and beautiful soup.
+The autotrader webscraper utilises selenium webdriver and beautiful soup to pull car data https://www.autotrader.co.uk/
+This only works with chrome brower
+Chrome driver for your chrome browser version will also need to be installed: https://sites.google.com/chromium.org/driver/downloads
 
 1) The relevant libraries are imported
 
@@ -162,4 +164,6 @@ import mysql.connector (to upload scraped data to a mysql server)
 
 8f) Once all the data for the cars has been uploaded to teh database "Data succesfully inserted into cars database" is printed.
 
-Thansk for reading 
+Thanks for reading, this has been CS50P!
+
+
