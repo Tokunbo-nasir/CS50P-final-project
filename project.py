@@ -8,9 +8,10 @@ import mysql.connector
 import os
 
 #Script does not include fully electric cars because they have a different dataset spec sheet
+
 #Autotrader is limited to 100 pages of results.
 
-#All the data is appended to the MySQL database
+#All the data is appended to the MySQL database.
 make_list =['abarth' ,'ac' ,'aixam' , 'ak', 'alfa romeo','all','alpine', 'alvis', 
                 'ariel', 'aston martin','auburn', 'audi', 'austin', 'bac', 'beauford',
                 'bentley', 'bmw', 'bristol', 'bugatti','buick', 'byd','cadillac','caterham',
