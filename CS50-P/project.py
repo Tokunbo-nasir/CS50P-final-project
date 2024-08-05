@@ -292,6 +292,9 @@ def main():
     URL = userinput()
     p = int(input("How many pages would you like to parse through? e.g 10 (max 100):  "))
     car_list = scraper(URL,p)
-    upload(car_list)  
+    try:
+        upload(car_list)
+    except Exception:
+        print("Database has not been configured , please create a MYSQL database for inputs")
 main()
 

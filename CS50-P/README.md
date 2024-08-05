@@ -3,6 +3,9 @@
 #### Description:
 The autotrader webscraper utilises selenium webdriver and beautiful soup.
 
+Please note the "upload" function will not work if a my sql database is not configured on the local host i will also explain this in my video
+In this case if the upload function is commented out the results will still be printed 
+
 1) The relevant libraries are imported
 
 from selenium import webdriver 
