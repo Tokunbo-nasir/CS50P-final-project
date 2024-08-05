@@ -16,7 +16,7 @@ make_list =['abarth' ,'ac' ,'aixam' , 'ak', 'alfa romeo','all','alpine', 'alvis'
                 'bentley', 'bmw', 'bristol', 'bugatti','buick', 'byd','cadillac','caterham',
                 'chesil','chevrolet','chrysler','citroen','corvette','cupra','custom vehicle',
                 'baeia','dacia','daewoo','daewoo','daihatsu','daihatsu','daimler','datsun',
-                'dax','de tomaso','dfsk','dodge','ds automobiles','ferrari','fiat','fiat','fisker',
+                'dax','de tomaso','dfsk','dodge','ds automobiles','ferrari','fiat','fisker',
                 'ford','gardner douglas','genesis','gmc','great wall','gwm ora','hillman',
                 'honda','hummer','hyundai','ineos','infiniti','isuzu','jaguar','jeep','jensen',
                 'kgm','kia','ktm','lada','lamborghini','lancia','land rover','levc','lexus',
