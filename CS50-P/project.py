@@ -48,10 +48,17 @@ def userinput():
                     input_check(in_make,in_maxprice,in_milage,in_year,)
                     
                     if in_make == "all":
-                        URL2 = f"https://www.autotrader.co.uk/car-search?advertising-location=at_cars&fuel-type=Petrol&fuel-type=Diesel&fuel-type=Petrol%20Plug-in%20Hybrid&fuel-type=Diesel%20Plug-in%20Hybrid&fuel-type=Petrol%20Hybrid&fuel-type=Diesel%20Hybrid&max-engine-power={in_hp}&maximum-badge-engine-size={in_enginesize}&maximum-mileage={in_milage}&moreOptions=visible&postcode=SW1A%201AA&price-to={in_maxprice}&sort=most-recent&year-from={in_year}&page=1"
+                        URL2 = f"https://www.autotrader.co.uk/car-search?advertising-location=at_cars&fuel-type=Petrol& \
+                        fuel-type=Diesel&fuel-type=Petrol%20Plug-in%20Hybrid&fuel-type=Diesel%20Plug-in%20Hybrid& \
+                        fuel-type=Petrol%20Hybrid&fuel-type=Diesel%20Hybrid&max-engine-power={in_hp}& \
+                        maximum-badge-engine-size={in_enginesize}&maximum-mileage={in_milage}& \
+                        moreOptions=visible&postcode=SW1A%201AA&price-to={in_maxprice}&sort=most-recent&year-from={in_year}&page=1"
                     else:
-                        URL2 = f"https://www.autotrader.co.uk/car-search?advertising-location=at_cars&fuel-type=Petrol&fuel-type=Diesel&fuel-type=Petrol%20Plug-in%20Hybrid&fuel-type=Diesel%20Plug-in%20Hybrid&fuel-type=Petrol%20Hybrid&fuel-type=Diesel%20Hybrid&make={in_make}&max-engine-power={in_hp}&maximum-badge-engine-size={in_enginesize}&maximum-mileage={in_milage}&moreOptions=visible&postcode=SW1A%201AA&price-to={in_maxprice}&sort=most-recent&year-from={in_year}&page=1"
-                    make_index += 1
+                        URL2 = f"https://www.autotrader.co.uk/car-search?advertising-location=at_cars&fuel-type=Petrol&  \
+                        fuel-type=Diesel&fuel-type=Petrol%20Plug-in%20Hybrid&fuel-type=Diesel%20Plug-in%20Hybrid& \
+                        fuel-type=Petrol%20Hybrid&fuel-type=Diesel%20Hybrid&make={in_make}&max-engine-power={in_hp}& \
+                        maximum-badge-engine-size={in_enginesize}&maximum-mileage={in_milage}& \
+                        moreOptions=visible&postcode=SW1A%201AA&price-to={in_maxprice}&sort=most-recent&year-from={in_year}&page=1"
                     return URL2
                 except ValueError:
                     print(f"Incorrect entry, please try again")
@@ -59,7 +66,7 @@ def userinput():
         elif ans1 == 'semi automated' or ans1 == 'sa':
             #Run script multiple times to get a 100 pages of adverts for all car brands  
             #Each time "semi-automated" is selected it will move onto the next car brand in the "make_list" list    
-            if os.path.exists ("run_counter.txt")  == False:     #check if file that counts how many time script has been run, exists
+            if os.path.exists ("run_counter.txt")  == False: #check if file that counts how many time script has been run, exists
                 with open("run_counter.txt", "w") as mc:
                     mc.write("0")
                     runs = int(mc.read()) 
@@ -96,7 +103,7 @@ def input_check(m,mp,mi,y):
         return True
 
 def scraper(url, total):
-    '''Use selenium to open a broswer page and click the accept cookies button'''
+    '''Use selenium to open a browser page and click the accept cookies button'''
     #setup the chromedriver
     options = webdriver.ChromeOptions()
     options.add_experimental_option("detach", True)
@@ -231,7 +238,7 @@ def scraper(url, total):
     if len(carz) == 0:
         print("No search results found on autotrader")
     else:
-        print(carz)
+        for i in carz:print(i)
     return carz
 
 def upload(cl):
@@ -288,10 +295,17 @@ def upload(cl):
     print(f"Data succesfully inserted into cars database, {results_num} cars inserted")
     
 def main():
-    #TODO SET DEFAULT CRITERIA SO SCRIPT CAN RUN AUTOMATICALLY
+
     URL = userinput()
+    
     p = int(input("How many pages would you like to parse through? e.g 10 (max 100):  "))
+    
     car_list = scraper(URL,p)
-    upload(car_list)  
+    
+    try:
+        upload(car_list)
+    except Exception:
+        print("Database has not been configured , please create a MYSQL database for inputs")
+        raise TypeError
 main()
 

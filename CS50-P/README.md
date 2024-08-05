@@ -1,7 +1,9 @@
 # Autotrader webscraper
 #### Video Demo:  <URL HERE>
 #### Description:
-The autotrader webscraper utilises selenium webdriver and beautiful soup.
+The autotrader webscraper utilises selenium webdriver and beautiful soup to pull car data https://www.autotrader.co.uk/
+This only works with chrome brower
+Chrome driver for your chrome browser version will also need to be installed: https://sites.google.com/chromium.org/driver/downloads
 
 1) The relevant libraries are imported
 
@@ -148,6 +150,7 @@ import mysql.connector (to upload scraped data to a mysql server)
     carz = [ {'make': 'Land Rover Range Rover Sport', 'price': 94490, 'year': 2023, 'reg': 73, 'body': 'SUV', 'milage': 6373, 'enginesize': 3.0, 'bhp': 542.0, 'gearbox': 'Automatic', 'fueltype': 'Petrol Plug-in Hybrid', 'doors': 5}, {'make': 'Nissan Qashqai', 'price': 18000, 'year': 2022, 'reg': 72, 'body': 'SUV', 'milage': 32249, 'enginesize': 1.3, 'bhp': 138.0, 'gearbox': 'Manual', 'fueltype': 'Petrol Hybrid', 'doors': 5} ]
 
 8) The "upload" function is called within the "main" function
+   The try except block exists in case the MySQL database is not configured on another users device.
 
 8a) it takes the "car_list" as an arguement and loop through each dictioanry in the list
 
@@ -161,4 +164,6 @@ import mysql.connector (to upload scraped data to a mysql server)
 
 8f) Once all the data for the cars has been uploaded to teh database "Data succesfully inserted into cars database" is printed.
 
-Thansk for reading 
+Thanks for reading, this has been CS50P!
+
+
