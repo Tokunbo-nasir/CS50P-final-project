@@ -238,8 +238,7 @@ def scraper(url, total):
     if len(carz) == 0:
         print("No search results found on autotrader")
     else:
-        for i in carz:
-            print(i)
+        for i in carz:print(i)
     return carz
 
 def upload(cl):
