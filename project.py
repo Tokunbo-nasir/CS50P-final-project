@@ -34,7 +34,8 @@ make_list =['abarth' ,'ac' ,'aixam' , 'ak', 'alfa romeo','all','alpine', 'alvis'
     
 def userinput():
     while True: 
-        ans1 = input("Do you want to specify the type of car you want? (Yes, No, Semi automated): ").lower()
+        ans1 = "sa"
+        #ans1 = input("Do you want to specify the type of car you want? (Yes, No, Semi automated): ").lower()
         if ans1 == 'no':
             URL1 = "https://www.autotrader.co.uk/car-search?postcode=SW1A%201AA&sort=year-dsc&page=1"
             return URL1
@@ -79,8 +80,11 @@ def userinput():
             in_milage = '200000' 
             in_maxprice = '2000000' 
             in_enginesize = '7.0' 
-            in_hp = '2000' 
-            in_make =  make_list[runs] 
+            in_hp = '2000'
+            try: 
+                in_make =  make_list[runs]
+            except IndexError:
+                break  
             URL3 = f"https://www.autotrader.co.uk/car-search?advertising-location=at_cars&fuel-type=Petrol&fuel-type=Diesel&fuel-type=Petrol%20Plug-in%20Hybrid&fuel-type=Diesel%20Plug-in%20Hybrid&fuel-type=Petrol%20Hybrid&fuel-type=Diesel%20Hybrid&make={in_make}&max-engine-power={in_hp}&maximum-badge-engine-size={in_enginesize}&maximum-mileage={in_milage}&moreOptions=visible&postcode=SW1A%201AA&price-to={in_maxprice}&sort=most-recent&year-from={in_year}&page=1"
     
             runs += 1 #increment runs by 1 and write back to run counter file 
@@ -304,7 +308,7 @@ def main():
         x += 1
         URL = userinput()
         #p = int(input("How many pages would you like to parse through? e.g 10 (max 100):  "))
-        p = 100
+        p = 5
         car_list = scraper(URL,p)
         try:
             upload(car_list)
