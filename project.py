@@ -34,7 +34,8 @@ make_list =['abarth' ,'ac' ,'aixam' , 'ak', 'alfa romeo','all','alpine', 'alvis'
     
 def userinput():
     while True: 
-        ans1 = input("Do you want to specify the type of car you want? (Yes, No, Semi automated): ").lower()
+        ans1 = "sa"
+        #ans1 = input("Do you want to specify the type of car you want? (Yes, No, Semi automated): ").lower()
         if ans1 == 'no':
             URL1 = "https://www.autotrader.co.uk/car-search?postcode=SW1A%201AA&sort=year-dsc&page=1"
             return URL1
@@ -79,8 +80,11 @@ def userinput():
             in_milage = '200000' 
             in_maxprice = '2000000' 
             in_enginesize = '7.0' 
-            in_hp = '2000' 
-            in_make =  make_list[runs] 
+            in_hp = '2000'
+            try: 
+                in_make =  make_list[runs]
+            except IndexError:
+                break  
             URL3 = f"https://www.autotrader.co.uk/car-search?advertising-location=at_cars&fuel-type=Petrol&fuel-type=Diesel&fuel-type=Petrol%20Plug-in%20Hybrid&fuel-type=Diesel%20Plug-in%20Hybrid&fuel-type=Petrol%20Hybrid&fuel-type=Diesel%20Hybrid&make={in_make}&max-engine-power={in_hp}&maximum-badge-engine-size={in_enginesize}&maximum-mileage={in_milage}&moreOptions=visible&postcode=SW1A%201AA&price-to={in_maxprice}&sort=most-recent&year-from={in_year}&page=1"
     
             runs += 1 #increment runs by 1 and write back to run counter file 
@@ -146,8 +150,10 @@ def scraper(url, total):
         try:
             #create beautiful soup object from source   
             soup = BeautifulSoup(source, "html.parser")
-            #Find all adverts based on the html class and tag 
-            test = soup.find("ul", {"class" : "at__sc-1iwoe3s-1 dzbHte"}).findAll("li", {"class" :"at__sc-1iwoe3s-2 hGhRgM"}, recursive=False)
+            #Find all adverts based on the html class and tag
+            class1 = "at__sc-mddoqs-0 dsUIdv"
+            class2 = "at__sc-mddoqs-1 hFwRiy"
+            test = soup.find("ul", {"class" : class1}).findAll("li", {"class" : class2}, recursive=False)
             time.sleep(1)
             if len(test) < 2:
                 raise TypeError
@@ -263,10 +269,11 @@ def upload(cl):
         
         #connect to database
         mydb = mysql.connector.connect(
-            host="localhost",
-            user="Nasir",
-            password="root",
-            database="cars"
+            host="carsdb-do-user-17667017-0.d.db.ondigitalocean.com",
+            user="doadmin",
+            password="AVNS_zlTpbPhcThAx01YXmMG",
+            database="defaultdb",
+            port = 25060
             )
         #create cursor object for database
         mycursor = mydb.cursor()
@@ -296,17 +303,19 @@ def upload(cl):
     print(f"Data succesfully inserted into cars database, {results_num} cars inserted")
     
 def main():
-
-    URL = userinput()
-    
-    p = int(input("How many pages would you like to parse through? e.g 10 (max 100):  "))
-    
-    car_list = scraper(URL,p)
-    
-    try:
-        upload(car_list)
-    except Exception:
-        print("Database has not been configured , please create a MYSQL database for inputs")
-        raise TypeError
+    x = 0
+    while x < len(make_list):
+        x += 1
+        URL = userinput()
+        #p = int(input("How many pages would you like to parse through? e.g 10 (max 100):  "))
+        p = 5
+        car_list = scraper(URL,p)
+        try:
+            upload(car_list)
+        except Exception:
+            print("Database has not been configured , please create a MYSQL database for inputs")
+            raise TypeError
 main()
+
+
 
