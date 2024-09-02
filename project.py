@@ -146,8 +146,10 @@ def scraper(url, total):
         try:
             #create beautiful soup object from source   
             soup = BeautifulSoup(source, "html.parser")
-            #Find all adverts based on the html class and tag 
-            test = soup.find("ul", {"class" : "at__sc-1iwoe3s-1 dzbHte"}).findAll("li", {"class" :"at__sc-1iwoe3s-2 hGhRgM"}, recursive=False)
+            #Find all adverts based on the html class and tag
+            class1 = "at__sc-mddoqs-0 dsUIdv"
+            class2 = "at__sc-mddoqs-1 hFwRiy"
+            test = soup.find("ul", {"class" : class1}).findAll("li", {"class" : class2}, recursive=False)
             time.sleep(1)
             if len(test) < 2:
                 raise TypeError
@@ -263,10 +265,11 @@ def upload(cl):
         
         #connect to database
         mydb = mysql.connector.connect(
-            host="localhost",
-            user="Nasir",
-            password="root",
-            database="cars"
+            host="carsdb-do-user-17667017-0.d.db.ondigitalocean.com",
+            user="doadmin",
+            password="AVNS_zlTpbPhcThAx01YXmMG",
+            database="defaultdb",
+            port = 25060
             )
         #create cursor object for database
         mycursor = mydb.cursor()
@@ -296,17 +299,17 @@ def upload(cl):
     print(f"Data succesfully inserted into cars database, {results_num} cars inserted")
     
 def main():
-
-    URL = userinput()
-    
-    p = int(input("How many pages would you like to parse through? e.g 10 (max 100):  "))
-    
-    car_list = scraper(URL,p)
-    
-    try:
-        upload(car_list)
-    except Exception:
-        print("Database has not been configured , please create a MYSQL database for inputs")
-        raise TypeError
+    x = 0
+    while x < len(make_list):
+        x += 1
+        URL = userinput()
+        #p = int(input("How many pages would you like to parse through? e.g 10 (max 100):  "))
+        p = 100
+        car_list = scraper(URL,p)
+        try:
+            upload(car_list)
+        except Exception:
+            print("Database has not been configured , please create a MYSQL database for inputs")
+            raise TypeError
 main()
 
