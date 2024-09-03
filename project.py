@@ -302,7 +302,7 @@ def upload(cl):
         #sql insert queries
         sqlbody="INSERT INTO bodyspec(bodytype, doors, gearbox) VALUES(%s, %s, %s)"  
         sqleng="INSERT INTO enginespec(enginesize, fueltype, horsepower) VALUES(%s, %s, %s)" 
-        sqlcar ="INSERT INTO carspec(make, reg, year, price, milage) VALUES(%s, %s, %s, %s, %s, %s)"
+        sqlcar ="INSERT INTO carspec(make, model, reg, year, price, milage) VALUES(%s, %s, %s, %s, %s, %s)"
         
         #execute queries
         mycursor.execute(sqlbody, inp_body)
@@ -329,7 +329,7 @@ def main():
     while x < len(make_list):
         x += 1
         URL= userinput() 
-        pages = 5 #number of search results pages to scrape 
+        pages = 30 #number of search results pages to scrape 
         #pages = int(input("How many pages would you like to parse through? e.g 10 (max 100):  "))
         car_list = scraper(URL,pages)
         try:
