@@ -272,7 +272,8 @@ def upload(cl):
     #reformat each dictionary as a list to use as inputs for an insert SQL query 
     #cl stands for "cars_list"
     for i in cl:
-        mk = i['make']
+        ma = i['make']
+        mo = i['model']
         prc = i['price']
         yr = i['year']
         rg = i['reg']
@@ -285,7 +286,7 @@ def upload(cl):
         drs = i['doors']  
         inp_body = [bdy, drs, gbx]
         inp_eng = [eng, ful, hpw]
-        inp_car = [mk, rg, yr, prc, mil]
+        inp_car = [ma, mo, rg, yr, prc, mil]
         
         #connect to database
         mydb = mysql.connector.connect(
@@ -301,7 +302,7 @@ def upload(cl):
         #sql insert queries
         sqlbody="INSERT INTO bodyspec(bodytype, doors, gearbox) VALUES(%s, %s, %s)"  
         sqleng="INSERT INTO enginespec(enginesize, fueltype, horsepower) VALUES(%s, %s, %s)" 
-        sqlcar ="INSERT INTO carspec(make, reg, year, price, milage) VALUES(%s, %s, %s, %s, %s)"
+        sqlcar ="INSERT INTO carspec(make, reg, year, price, milage) VALUES(%s, %s, %s, %s, %s, %s)"
         
         #execute queries
         mycursor.execute(sqlbody, inp_body)
