@@ -91,7 +91,7 @@ def userinput():
             with open("run_counter.txt", "w") as mc:
                     mc.write(str(runs))
             print(f"current make is: {in_make}")
-            return URL3 #return the URL with the changed car make/brand 
+            return URL3 #return the URL 
             
                     
 def input_check(m,mp,mi,y):
@@ -164,8 +164,8 @@ def scraper(url, total):
 
         #loop through each advert on the page 
         for i in test:
-            empty_dict = dict.fromkeys(['make', 'price', 'year', 'reg', 'body', 'milage', 'enginesize', 'bhp', 'gearbox', 'fueltype', 'doors'])
-            make_car = i.find("h3", {"class" : "at__sc-1n64n0d-7 fcDnGr"})
+            empty_dict = dict.fromkeys(['make', 'model', 'price', 'year', 'reg', 'body', 'milage', 'enginesize', 'bhp', 'gearbox', 'fueltype', 'doors'])
+            car_name = i.find("h3", {"class" : "at__sc-1n64n0d-7 fcDnGr"})
             price_car = i.find("span", {"class" : "at__sc-1mc7cl3-5 edXwbj"})
             rest = i.find_all("li", {"class": "at__sc-1n64n0d-9 hYdVyl"})
             doors_car = i.find("p", {"data-testid" : "search-listing-subtitle"})
@@ -180,6 +180,24 @@ def scraper(url, total):
                 continue
             else:
                 try:
+                    #format make/brand & model by checking number of words in the cars name 
+                    name = car_name.get_text()
+                    sname = name.split()
+                    ma = sname[0]
+                    
+                    if len(sname) == 2:
+                        mo = sname[1]
+                    elif len(sname) == 3:
+                        mo = f"{sname[1]} {sname[2]}"
+                    elif len(sname) == 4:
+                        mo = f"{sname[1]} {sname[2]} {sname[3]}"
+                    elif len(sname) == 5:
+                        mo = f"{sname[1]} {sname[2]} {sname[3]} {sname[4]}"
+                    elif len(sname) == 5:
+                        mo = f"{sname[1]} {sname[2]} {sname[3]} {sname[4]} {sname[5]}"
+                    elif len(sname) == 6:
+                        mo = f"{sname[1]} {sname[2]} {sname[3]} {sname[4]} {sname[5]} {sname[6]}"
+                    
                     #format price
                     p = price_car.get_text()
                     p = int(p.replace("£","").replace(",", ""))
@@ -218,8 +236,9 @@ def scraper(url, total):
                         d = 0
                         continue
                     
-                    #populate empty dict with details of current advert 
-                    empty_dict['make'] = make_car.get_text()
+                    #populate empty dict with details of current advert
+                    empty_dict['make'] = ma
+                    empty_dict['model'] = mo
                     empty_dict['price'] = p
                     empty_dict['year']= y
                     empty_dict['reg'] = r
@@ -304,13 +323,14 @@ def upload(cl):
     print(f"Data succesfully inserted into cars database, {results_num} cars inserted")
     
 def main():
+        #p = int(input("How many pages would you like to parse through? e.g 10 (max 100):  "))
     x = 0
     while x < len(make_list):
         x += 1
-        URL = userinput()
-        #p = int(input("How many pages would you like to parse through? e.g 10 (max 100):  "))
-        p = 5
-        car_list = scraper(URL,p)
+        URL= userinput() 
+        pages = 5 #number of search results pages to scrape 
+        #pages = int(input("How many pages would you like to parse through? e.g 10 (max 100):  "))
+        car_list = scraper(URL,pages)
         try:
             upload(car_list)
         except Exception:
